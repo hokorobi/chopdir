@@ -7,6 +7,16 @@ hoge
     puyo
 ```
 
+や
+
+```
+hoge
+  fuga
+    hoge
+      piyo
+      puyo
+```
+
 のようなディレクトリ構成だった場合に
 
 ```
