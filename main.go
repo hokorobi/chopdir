@@ -13,8 +13,12 @@ import (
 
 func main() {
 	if len(os.Args) > 1 {
-		wd := os.Args[1]
-		chopdir(wd)
+		for _, dir := range os.Args[1:] {
+			if !existsDir(dir) {
+				continue
+			}
+			chopdir(dir)
+		}
 		return
 	}
 
