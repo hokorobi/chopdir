@@ -12,11 +12,29 @@ import (
 )
 
 func main() {
-	if len(os.Args) == 0 {
-		logf("ディレクトリを指定してください。")
+	if len(os.Args) > 1 {
+		wd := os.Args[1]
+		chopdir(wd)
+		return
 	}
 
-	wd := os.Args[1]
+	wd, err := os.Getwd()
+	if err != nil {
+		logf(err)
+	}
+	files, err := ioutil.ReadDir(wd)
+	if err != nil {
+		logf(err)
+	}
+	for _, file := range files {
+		if !existsDir(filepath.Join(wd, file.Name())) {
+			continue
+		}
+		chopdir(filepath.Join(wd, file.Name()))
+	}
+}
+
+func chopdir(wd string) {
 	if !existsDir(wd) {
 		logf("ディレクトリは存在しません。")
 	}
@@ -34,7 +52,7 @@ func main() {
 		logf(err)
 	}
 
-	newdir := chopdir(pwd, wd)
+	newdir := chopMove(pwd, wd)
 	os.Remove(wd)
 	os.Rename(newdir, wd)
 }
@@ -50,9 +68,9 @@ func existsDir(d string) bool {
 	return true
 }
 
-func chopdir(pwd string, wd string) string {
+func chopMove(pwd string, wd string) string {
 	if isAloneDir(wd) {
-		return chopdir(pwd, child(wd))
+		return chopMove(pwd, child(wd))
 	}
 	todir := getMovetoDir(pwd, wd)
 	err := os.Rename(wd, todir)
